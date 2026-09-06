@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skull Calculator 💀</title>
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background:
+        radial-gradient(circle at top, #35105c, #09000f 55%, #000 100%);
+    font-family: Arial, sans-serif;
+    color: white;
+    overflow: hidden;
+}
+body::before {
+    content: "💀";
+    position: fixed;
+    top: 5%;
+    left: 5%;
+    font-size: 80px;
+    opacity: .12;
+    transform: rotate(-20deg);
+}
+body::after {
+    content: "☠️";
+    position: fixed;
+    bottom: 5%;
+    right: 5%;
+    font-size: 90px;
+    opacity: .12;
+    transform: rotate(20deg);
+}
+.calculator {
+    width: min(92vw, 380px);
+    padding: 22px;
+    border: 2px solid #9b00ff;
+    border-radius: 28px;
+    background: rgba(15, 5, 25, .92);
+    box-shadow:
+        0 0 20px #8a00ff,
+        0 0 60px rgba(138, 0, 255, .35);
+}
+.title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #d88cff;
+    text-shadow: 0 0 12px #9b00ff;
+}
+.display {
+    width: 100%;
+    height: 85px;
+    padding: 15px;
+    margin-bottom: 18px;
+    border-radius: 18px;
+    border: 1px solid #7800b8;
+    background: #050008;
+    color: #fff;
+    text-align: right;
+    font-size: 38px;
+    overflow: hidden;
+    box-shadow: inset 0 0 15px rgba(155, 0, 255, .35);
+}
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+button {
+    height: 65px;
+    border: none;
+    border-radius: 17px;
+    background: #180a22;
+    color: white;
+    font-size: 23px;
+    font-weight: bold;
+    box-shadow:
+        inset 0 0 8px rgba(255,255,255,.05),
+        0 0 8px rgba(155,0,255,.25);
+    cursor: pointer;
+}
+button:active {
+    transform: scale(.94);
+    background: #35104b;
+}
+.operator {
+    color: #df8cff;
+    border: 1px solid #8f00d4;
+}
+.equals {
+    background: linear-gradient(135deg, #7200a8, #b400ff);
+    box-shadow: 0 0 15px rgba(180, 0, 255, .7);
+}
+.clear {
+    color: #ff6bcb;
+}
+.zero {
+    grid-column: span 2;
+}
+.skull {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 15px;
+    opacity: .7;
+}
+</style>
+</head>
+<body>
+<div class="calculator">
+    <div class="title">💀 SKULL CALCULATOR 💀</div>
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+        <button class="clear" onclick="clearDisplay()">C</button>
+        <button onclick="deleteLast()">⌫</button>
+        <button onclick="percent()">%</button>
+        <button class="operator" onclick="chooseOperator('/')">÷</button>
+        <button onclick="number('7')">7</button>
+        <button onclick="number('8')">8</button>
+        <button onclick="number('9')">9</button>
+        <button class="operator" onclick="chooseOperator('*')">×</button>
+        <button onclick="number('4')">4</button>
+        <button onclick="number('5')">5</button>
+        <button onclick="number('6')">6</button>
+        <button class="operator" onclick="chooseOperator('-')">−</button>
+        <button onclick="number('1')">1</button>
+        <button onclick="number('2')">2</button>
+        <button onclick="number('3')">3</button>
+        <button class="operator" onclick="chooseOperator('+')">+</button>
+        <button class="zero" onclick="number('0')">0</button>
+        <button onclick="number('.')">.</button>
+        <button class="equals" onclick="calculate()">=</button>
+    </div>
+    <div class="skull">☠️ Calculate your fate ☠️</div>
+</div>
+<script>
+let display = document.getElementById("display");
+let current = "";
+let operator = "";
+let previous = "";
+function number(num) {
+    if (num === "." && current.includes(".")) return;
+    current += num;
+    display.textContent = current;
+}
+function chooseOperator(op) {
+    if (current === "" && previous === "") return;
+    if (previous !== "" && current !== "") {
+        calculate();
+    }
+    previous = current;
+    current = "";
+    operator = op;
+}
+function calculate() {
+    if (previous === "" || current === "" || operator === "") return;
+    let a = parseFloat(previous);
+    let b = parseFloat(current);
+    let result;
+    if (operator === "+") result = a + b;
+    if (operator === "-") result = a - b;
+    if (operator === "*") result = a * b;
+    if (operator === "/") {
+        if (b === 0) {
+            display.textContent = "💀 ERROR";
+            current = "";
+            previous = "";
+            operator = "";
+            return;
+        }
+        result = a / b;
+    }
+    result = Math.round(result * 100000000) / 100000000;
+    display.textContent = result;
+    current = String(result);
+    previous = "";
+    operator = "";
+}
+function clearDisplay() {
+    current = "";
+    previous = "";
+    operator = "";
+    display.textContent = "0";
+}
+function deleteLast() {
+    current = current.slice(0, -1);
+    display.textContent = current || "0";
+}
+function percent() {
+    if (current === "") return;
+    current = String(parseFloat(current) / 100);
+    display.textContent = current;
+}
+document.addEventListener("keydown", function(e) {
+    if (!isNaN(e.key) || e.key === ".") {
+        number(e.key);
+    }
+    if (["+", "-", "*", "/"].includes(e.key)) {
+        chooseOperator(e.key);
+    }
+    if (e.key === "Enter" || e.key === "=") {
+        calculate();
+    }
+    if (e.key === "Backspace") {
+        deleteLast();
+    }
+    if (e.key === "Escape") {
+        clearDisplay();
+    }
+    if (e.key === "%") {
+        percent();
+    }
+});
+</script>
+</body>
+</html>
